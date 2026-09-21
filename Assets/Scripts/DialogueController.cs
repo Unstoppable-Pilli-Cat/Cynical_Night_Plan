@@ -1,6 +1,11 @@
-
 using UnityEngine;
 using TMPro;
+
+[System.Serializable]
+public class DialogueData
+{
+    public string[] lines;
+}
 
 public class DialogueController : MonoBehaviour
 {
@@ -29,6 +34,16 @@ public class DialogueController : MonoBehaviour
         lines = data.lines;
         currentIndex = 0;
         ShowCurrentLine();
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0) ||
+            Input.GetKeyDown(KeyCode.Space) ||
+            Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            NextLine();
+        }
     }
 
     void ShowCurrentLine()

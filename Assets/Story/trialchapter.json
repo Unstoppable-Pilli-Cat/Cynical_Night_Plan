@@ -1,0 +1,51 @@
+{
+  "startNode": "opening",
+  "nodes": [
+    {
+      "id": "opening",
+      "speaker": "旁白",
+      "text": "深夜，你收到了一条来自陌生号码的消息。",
+      "next": "message"
+    },
+    {
+      "id": "message",
+      "speaker": "？？？",
+      "text": "如果你还记得我，就来旧车站。",
+      "next": "decision"
+    },
+    {
+      "id": "decision",
+      "speaker": "旁白",
+      "text": "你盯着屏幕，决定……",
+      "choices": [
+        {
+          "text": "回复：我会过去。",
+          "target": "accept",
+          "affectionChange": 2
+        },
+        {
+          "text": "回复：你是谁？",
+          "target": "question",
+          "affectionChange": -1
+        }
+      ]
+    },
+    {
+      "id": "accept",
+      "speaker": "？？？",
+      "text": "……谢谢你还愿意相信我。",
+      "next": "ending"
+    },
+    {
+      "id": "question",
+      "speaker": "？？？",
+      "text": "看来你真的什么都不记得了。",
+      "next": "ending"
+    },
+    {
+      "id": "ending",
+      "speaker": "旁白",
+      "text": "手机屏幕暗了下去。试玩章节结束。"
+    }
+  ]
+}
