@@ -3,28 +3,28 @@
   "nodes": [
     {
       "id": "opening",
-      "speaker": "旁白",
+      "speaker": "god",
       "text": "深夜，你收到了一条来自陌生号码的消息。",
       "next": "message"
     },
     {
       "id": "message",
-      "speaker": "？？？",
-      "text": "如果你还记得我，就来旧车站。",
+      "speaker": "Hotaru",
+      "text": "宋鑫？你好。",
       "next": "decision"
     },
     {
       "id": "decision",
-      "speaker": "旁白",
+      "speaker": "god",
       "text": "你盯着屏幕，决定……",
       "choices": [
         {
-          "text": "回复：我会过去。",
+          "text": "回复：你谁啊？",
           "target": "accept",
           "affectionChange": 2
         },
         {
-          "text": "回复：你是谁？",
+          "text": "又是骚扰短信……",
           "target": "question",
           "affectionChange": -1
         }
@@ -32,19 +32,19 @@
     },
     {
       "id": "accept",
-      "speaker": "？？？",
-      "text": "……谢谢你还愿意相信我。",
+      "speaker": "Hotaru",
+      "text": "……我是那天被你吐了一身的人。",
       "next": "ending"
     },
     {
       "id": "question",
-      "speaker": "？？？",
-      "text": "看来你真的什么都不记得了。",
+      "speaker": "Hotaru",
+      "text": "这么快就把我忘了吗……",
       "next": "ending"
     },
     {
       "id": "ending",
-      "speaker": "旁白",
+      "speaker": "god",
       "text": "手机屏幕暗了下去。试玩章节结束。"
     }
   ]

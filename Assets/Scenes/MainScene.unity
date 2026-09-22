@@ -904,6 +904,7 @@ GameObject:
   m_Component:
   - component: {fileID: 778798100}
   - component: {fileID: 778798101}
+  - component: {fileID: 778798102}
   m_Layer: 0
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -940,6 +941,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueController
   dialogueText: {fileID: 1950265268}
   storyFile: {fileID: 4900000, guid: 4b59f56d66833554086ca4379b9655d2, type: 3}
+  chapterFile: {fileID: 4900000, guid: 0fef07ee012886747a5e6c0b5fc2121d, type: 3}
+  choicePanel: {fileID: 778798102}
+--- !u!114 &778798102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778798098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e16a9aa1d34449a3a717713c93ef5afb, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ChoicePanel
+  panel: {fileID: 135977875}
+  buttonTemplate: {fileID: 2020930972}
 --- !u!1 &963216565
 GameObject:
   m_ObjectHideFlags: 0

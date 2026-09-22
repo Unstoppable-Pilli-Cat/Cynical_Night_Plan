@@ -1,65 +1,105 @@
-using UnityEngine;
+using System;
 using TMPro;
-
-[System.Serializable]
-public class DialogueData
-{
-    public string[] lines;
-}
+using UnityEngine;
 
 public class DialogueController : MonoBehaviour
 {
     public TMP_Text dialogueText;
     public TextAsset storyFile;
+    [SerializeField] private TextAsset chapterFile;
+    [SerializeField] private ChoicePanel choicePanel;
 
     private string[] lines;
-    private int currentIndex = 0;
+    private int currentIndex;
+    private NarrativeSession session;
+    private GameState gameState;
+    private bool chapterStarted;
+    private bool ready;
+    private int lastInteractionFrame = -1;
 
-    void Start()
+    private void Start()
     {
-        if (storyFile == null)
+        if (choicePanel != null)
+            choicePanel.Hide();
+        if (dialogueText == null || dialogueText.font == null || storyFile == null ||
+            chapterFile == null || choicePanel == null || !choicePanel.IsConfigured)
         {
-            Debug.LogError("Story json file not found.");
+            Debug.LogError("Dialogue setup requires text with a font, intro and chapter files, and a configured ChoicePanel.", this);
             return;
         }
 
-        DialogueData data = JsonUtility.FromJson<DialogueData>(storyFile.text);
-
-        if (data == null || data.lines == null || data.lines.Length == 0)
+        try
         {
-            Debug.LogError("Story file has no valid dialogue lines.");
+            DialogueData intro = JsonUtility.FromJson<DialogueData>(storyFile.text);
+            if (intro == null || intro.lines == null || intro.lines.Length == 0)
+                throw new ArgumentException($"Intro '{storyFile.name}' has no dialogue lines.");
+            lines = intro.lines;
+            // Validate the chapter up front so broken links cannot interrupt a playthrough.
+            session = new NarrativeSession(JsonUtility.FromJson<ChapterData>(chapterFile.text));
+        }
+        catch (ArgumentException error)
+        {
+            Debug.LogError($"Cannot load '{storyFile.name}' / '{chapterFile.name}': {error.Message}", this);
             return;
         }
 
-        lines = data.lines;
+        gameState = new GameState();
         currentIndex = 0;
-        ShowCurrentLine();
+        chapterStarted = false;
+        ready = true;
+        dialogueText.text = lines[currentIndex];
     }
 
-    void Update()
+    private void Update()
     {
-        if (Input.GetMouseButtonDown(0) ||
-            Input.GetKeyDown(KeyCode.Space) ||
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) ||
             Input.GetKeyDown(KeyCode.RightArrow))
-        {
             NextLine();
-        }
-    }
-
-    void ShowCurrentLine()
-    {
-        if (dialogueText != null && lines != null)
-        {
-            dialogueText.text = lines[currentIndex];
-        }
     }
 
     public void NextLine()
     {
-        if (lines != null && currentIndex < lines.Length - 1)
+        if (!ready || Time.frameCount == lastInteractionFrame ||
+            (chapterStarted && session.HasChoices))
+            return;
+        lastInteractionFrame = Time.frameCount;
+
+        if (!chapterStarted)
         {
-            currentIndex++;
-            ShowCurrentLine();
+            if (currentIndex < lines.Length - 1)
+            {
+                dialogueText.text = lines[++currentIndex];
+                return;
+            }
+            chapterStarted = true;
+            ShowCurrentNode();
         }
+        else if (session.Advance())
+        {
+            ShowCurrentNode();
+        }
+    }
+
+    private void ShowCurrentNode()
+    {
+        choicePanel.Hide();
+        DialogueNodeData node = session.CurrentNode;
+        dialogueText.text = string.IsNullOrEmpty(node.speaker)
+            ? node.text : $"{node.speaker}\n{node.text}";
+        if (session.HasChoices)
+            choicePanel.Show(node.choices, dialogueText.font, SelectChoice);
+    }
+
+    private void SelectChoice(int index)
+    {
+        if (!ready || !chapterStarted || !session.TryChoose(index, out ChoiceData choice))
+            return;
+
+        // UI callbacks and Update can run in either order; block this frame's advance.
+        lastInteractionFrame = Time.frameCount;
+        // In this trial's schema, every affectionChange explicitly belongs to Hotaru.
+        gameState.ChangeHotaruAffection(choice.affectionChange);
+        Debug.Log($"Hotaru affection: {gameState.HotaruAffection}", this);
+        ShowCurrentNode();
     }
 }
